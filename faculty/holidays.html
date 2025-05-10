@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FSPro - Holidays</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/modern-ui.css">
+    <link rel="stylesheet" href="../css/enhanced-forms.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        .holiday-form-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 1000;
+        }
+
+        .holiday-form {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border-top: 4px solid #2196F3;
+        }
+
+        .holiday-form h3 {
+            margin-top: 0;
+            color: #2196F3;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .close-form {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-form:hover {
+            color: #333;
+            background-color: #f5f5f5;
+            border-radius: 50%;
+        }
+
+        .form-actions {
+            margin-top: 1.5rem;
+            text-align: right;
+        }
+
+        .form-actions button {
+            padding: 10px 20px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .form-actions button:hover {
+            background-color: #1976D2;
+        }
+
+        .form-actions button:disabled {
+            background-color: #90CAF9;
+            cursor: not-allowed;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #424242;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #2196F3;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+
+
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .status-badge.status-pending {
+            background-color: #fff8e1;
+            color: #ff8f00;
+        }
+
+        .status-badge.status-approved {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-badge.status-rejected {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar Toggle Button for Mobile -->
+    <button class="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-brand">FSPro</div>
+        <div class="sidebar-nav">
+            <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="timetable.html"><i class="fas fa-calendar"></i> Time Table</a>
+            <a href="attendance.html"><i class="fas fa-clock"></i> Attendance</a>
+            <a href="tasks.html"><i class="fas fa-tasks"></i> Tasks</a>
+            <a href="progress.html"><i class="fas fa-chart-line"></i> Progress Reports</a>
+            <a href="holidays.html" class="active"><i class="fas fa-calendar-alt"></i> Holidays</a>
+            <a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="card">
+                <h2>Holiday Management</h2>
+
+                <!-- Holiday Request Button -->
+                <div class="holiday-actions">
+                    <button class="btn btn-primary" id="requestHolidayBtn">
+                        <i class="fas fa-plus"></i> Request Holiday
+                    </button>
+                </div>
+
+                <!-- Holiday Request Form (Modal) -->
+                <div class="holiday-form-container" id="holidayRequestForm">
+                    <div class="holiday-form">
+                        <button class="close-form" id="cancelRequest" title="Close">&times;</button>
+                        <h3>Request Holiday</h3>
+                        <form id="holidayForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="startDate">Start Date</label>
+                                    <input type="date" id="startDate" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="endDate">End Date</label>
+                                    <input type="date" id="endDate" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="holidayReason">Reason for Holiday</label>
+                                <textarea id="holidayReason" required></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" id="submitHolidayBtn" class="btn btn-primary">Submit
+                                    Request</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Holiday Requests -->
+                <div class="holiday-requests">
+                    <h3>My Holiday Requests</h3>
+                    <div class="table-responsive">
+                        <table class="table holiday-table">
+                            <thead>
+                                <tr>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Days</th>
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody id="holidayRequests">
+                                <!-- Holiday requests will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal for displaying full rejection reason -->
+                <div id="remarksModal" class="remarks-modal">
+                    <div class="remarks-modal-content">
+                        <div class="modal-header">
+                            <div class="header-title">Rejection Reason</div>
+                            <span class="close-modal">&times;</span>
+                        </div>
+                        <div id="modalContent" class="modal-content"></div>
+                    </div>
+                </div>
+
+                <style>
+                    .holiday-table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-bottom: 20px;
+                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+                    }
+
+                    .holiday-table th,
+                    .holiday-table td {
+                        padding: 12px 15px;
+                        text-align: left;
+                        border-bottom: 1px solid #e0e0e0;
+                    }
+
+                    .holiday-table th {
+                        background-color: #f5f5f5;
+                        font-weight: 600;
+                        color: #333;
+                    }
+
+                    .holiday-table tr:hover {
+                        background-color: #f9f9f9;
+                    }
+
+                    .holiday-table tr.rejected-request {
+                        border-left: 3px solid #e53935;
+                    }
+
+                    .holiday-table tr.rejected-request:hover {
+                        background-color: #fff8f8;
+                    }
+
+                    .holiday-table tr:last-child td {
+                        border-bottom: none;
+                    }
+
+                    /* Responsive table adjustments */
+                    @media (max-width: 768px) {
+
+                        .holiday-table th,
+                        .holiday-table td {
+                            padding: 8px 10px;
+                        }
+
+                        .remarks-cell {
+                            max-width: 120px;
+                        }
+
+                        .rejection-reason {
+                            min-width: 100px;
+                            max-width: 120px;
+                        }
+                    }
+
+                    .rejection-reason {
+                        color: #e53935;
+                        font-style: italic;
+                        padding: 8px 12px;
+                        border-left: 3px solid #e53935;
+                        background-color: #ffebee;
+                        border-radius: 0 4px 4px 0;
+                        word-wrap: break-word;
+                        line-height: 1.5;
+                        cursor: pointer;
+                        max-width: 100%;
+                        position: relative;
+                    }
+
+                    .view-more {
+                        font-size: 13px;
+                        color: #e53935;
+                        font-weight: bold;
+                        white-space: nowrap;
+                        display: inline-block;
+                        margin-left: 5px;
+                        background-color: #ffcdd2;
+                        padding: 2px 6px;
+                        border-radius: 4px;
+                        border: 1px solid #e53935;
+                    }
+
+                    .rejection-reason:hover {
+                        background-color: #ffcdd2;
+                    }
+
+                    .remarks-cell {
+                        width: 200px;
+                        max-width: 200px;
+                    }
+
+                    .no-remarks {
+                        color: #9e9e9e;
+                        font-style: italic;
+                        padding: 8px 0;
+                        text-align: center;
+                    }
+
+                    /* Add tooltip for very long remarks */
+                    .remarks-tooltip {
+                        position: relative;
+                        cursor: pointer;
+                    }
+
+                    .remarks-tooltip .remarks-full-text {
+                        visibility: hidden;
+                        width: 300px;
+                        background-color: #333;
+                        color: #fff;
+                        text-align: left;
+                        border-radius: 6px;
+                        padding: 10px;
+                        position: absolute;
+                        z-index: 1;
+                        bottom: 125%;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        opacity: 0;
+                        transition: opacity 0.3s;
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                        font-style: normal;
+                    }
+
+                    .remarks-tooltip .remarks-full-text::after {
+                        content: "";
+                        position: absolute;
+                        top: 100%;
+                        left: 50%;
+                        margin-left: -5px;
+                        border-width: 5px;
+                        border-style: solid;
+                        border-color: #333 transparent transparent transparent;
+                    }
+
+                    .remarks-tooltip:hover .remarks-full-text {
+                        visibility: visible;
+                        opacity: 1;
+                    }
+
+                    /* Modal styles */
+                    .remarks-modal {
+                        display: none;
+                        position: fixed;
+                        z-index: 1000;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        height: 100%;
+                        overflow: auto;
+                        background-color: rgba(0, 0, 0, 0.4);
+                    }
+
+                    .remarks-modal-content {
+                        background-color: #fff;
+                        margin: 15% auto;
+                        padding: 0;
+                        border: none;
+                        border-radius: 0;
+                        width: 90%;
+                        max-width: 500px;
+                        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+                        position: relative;
+                        overflow: hidden;
+                    }
+
+                    .modal-header {
+                        background-color: #e53935;
+                        color: white;
+                        padding: 10px 15px;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    }
+
+                    .header-title {
+                        margin: 0;
+                        font-size: 16px;
+                        font-weight: bold;
+                    }
+
+                    .close-modal {
+                        color: white;
+                        font-size: 20px;
+                        font-weight: bold;
+                        cursor: pointer;
+                        line-height: 1;
+                    }
+
+                    .close-modal:hover,
+                    .close-modal:focus {
+                        color: white;
+                    }
+
+                    .modal-content {
+                        padding: 15px;
+                        background-color: #ffebee;
+                        line-height: 1.5;
+                        font-size: 14px;
+                        overflow: visible;
+                        white-space: normal;
+                        word-break: break-word;
+                    }
+                </style>
+
+
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script type="module">
+        // Import Firebase functions
+        import { submitHolidayRequest, getCurrentUser, getEmployeeHolidayRequests } from '../js/firebase-service.js';
+
+        // Make submitHolidayRequest available globally
+        window.submitHolidayRequest = async function (startDate, endDate, reason) {
+            try {
+                // Get the submit button and show loading state
+                const submitBtn = document.getElementById('submitHolidayBtn');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+                }
+
+                // Get current user
+                const currentUser = getCurrentUser();
+                if (!currentUser) {
+                    alert('You must be logged in to submit a holiday request');
+                    return;
+                }
+
+                // Calculate number of days
+                const startDateObj = new Date(startDate);
+                const endDateObj = new Date(endDate);
+
+                // Validate dates
+                if (startDateObj > endDateObj) {
+                    alert('End date cannot be before start date');
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = 'Submit Request';
+                    }
+                    return;
+                }
+
+                const diffTime = Math.abs(endDateObj - startDateObj);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+                // Create request data
+                const requestData = {
+                    employeeId: currentUser.employeeId || currentUser.uid,
+                    employeeName: currentUser.displayName || currentUser.email,
+                    startDate: startDate,
+                    endDate: endDate,
+                    days: diffDays,
+                    reason: reason,
+                    status: 'pending' // Initial status
+                };
+
+                // Submit the request
+                const result = await submitHolidayRequest(requestData);
+
+                if (result.success) {
+                    alert(`Holiday request submitted successfully for ${diffDays} days`);
+
+                    // Reset form and hide modal
+                    document.getElementById('holidayForm').reset();
+                    document.getElementById('holidayRequestForm').style.display = 'none';
+
+                    // Update the holiday requests table directly without page reload
+                    await updateHolidayRequestsTable(currentUser.employeeId || currentUser.uid);
+                } else {
+                    alert(`Failed to submit holiday request: ${result.error}`);
+                }
+            } catch (error) {
+                console.error('Error submitting holiday request:', error);
+                alert(`Error submitting holiday request: ${error.message}`);
+            } finally {
+                // Re-enable submit button
+                const submitBtn = document.getElementById('submitHolidayBtn');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Submit Request';
+                }
+            }
+        };
+
+        // Function to update the holiday requests table
+        async function updateHolidayRequestsTable(employeeId) {
+            try {
+                // Show loading indicator
+                const requestsContainer = document.getElementById('holidayRequests');
+                requestsContainer.innerHTML = '<tr><td colspan="6" class="text-center">Loading requests...</td></tr>';
+
+                // Get holiday requests for the employee
+                const requests = await getEmployeeHolidayRequests(employeeId);
+
+                // Display the requests
+                displayHolidayRequests(requests);
+            } catch (error) {
+                console.error('Error updating holiday requests table:', error);
+            }
+        }
+
+        // Function to display holiday requests
+        function displayHolidayRequests(requests) {
+            const requestsContainer = document.getElementById('holidayRequests');
+            requestsContainer.innerHTML = '';
+
+            if (requests.length === 0) {
+                requestsContainer.innerHTML = '<tr><td colspan="6" class="text-center">No holiday requests found</td></tr>';
+                return;
+            }
+
+            // Sort requests by date (newest first)
+            requests.sort((a, b) => {
+                const dateA = new Date(a.submittedAt || a.startDate);
+                const dateB = new Date(b.submittedAt || b.startDate);
+                return dateB - dateA;
+            });
+
+            // Create rows for each request
+            requests.forEach(request => {
+                const row = document.createElement('tr');
+
+                // Format the status with proper styling
+                const statusClass = request.status.toLowerCase();
+                const statusText = request.status.charAt(0).toUpperCase() + request.status.slice(1);
+
+                // Add row class for rejected items to highlight them
+                if (statusClass === 'rejected') {
+                    row.classList.add('rejected-request');
+                }
+
+                // Format dates for display
+                const formatDate = (dateStr) => {
+                    const date = new Date(dateStr);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                };
+
+                // Check if there's a rejection reason to display
+                const remarks = request.remarks || '';
+
+                // Create different displays based on status and remarks length
+                let remarksDisplay = '<div class="no-remarks">-</div>';
+
+                if (statusClass === 'rejected' && remarks) {
+                    // Add a "Click to view" text for new users
+                    remarksDisplay = `<div class="rejection-reason" title="Click to view full reason">
+                        <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${remarks}</div>
+                        <span class="view-more">Click to view full text</span>
+                    </div>`;
+                }
+
+                row.innerHTML = `
+                    <td>${formatDate(request.startDate)}</td>
+                    <td>${formatDate(request.endDate)}</td>
+                    <td>${request.days}</td>
+                    <td>${request.reason}</td>
+                    <td>
+                        <span class="status-badge status-${statusClass}">
+                            ${statusText}
+                        </span>
+                    </td>
+                    <td class="remarks-cell">
+                        ${remarksDisplay}
+                    </td>
+                `;
+                requestsContainer.appendChild(row);
+
+                // Add click event for rejection reasons to show a modal with full text
+                if (statusClass === 'rejected' && remarks) {
+                    const rejectionElement = row.querySelector('.rejection-reason');
+                    if (rejectionElement) {
+                        rejectionElement.addEventListener('click', function () {
+                            // Show the modal with the full rejection reason
+                            const modal = document.getElementById('remarksModal');
+                            const modalContent = document.getElementById('modalContent');
+
+                            // Set the content with the full text
+                            modalContent.textContent = remarks;
+
+                            // Display the modal
+                            modal.style.display = 'block';
+                        });
+                    }
+                }
+            });
+        }
+
+        // Initialize the holiday requests table on page load
+        document.addEventListener('DOMContentLoaded', async function () {
+            const currentUser = getCurrentUser();
+            if (currentUser) {
+                await updateHolidayRequestsTable(currentUser.employeeId || currentUser.uid);
+            }
+
+            // Set up modal close functionality
+            const modal = document.getElementById('remarksModal');
+            const closeBtn = document.querySelector('.close-modal');
+
+            // Close when clicking the X button
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function () {
+                    modal.style.display = 'none';
+                });
+            }
+
+            // Close when clicking outside the modal
+            window.addEventListener('click', function (event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // Close with Escape key
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && modal.style.display === 'block') {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
+
+    <script>
+        // Toggle sidebar on mobile
+        document.querySelector('.sidebar-toggle').addEventListener('click', function () {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+
+        // Direct event listener for the request holiday button
+        document.addEventListener('DOMContentLoaded', function () {
+            const requestBtn = document.getElementById('requestHolidayBtn');
+            const holidayForm = document.getElementById('holidayRequestForm');
+
+            if (requestBtn) {
+                requestBtn.onclick = function () {
+                    console.log('Request holiday button clicked directly');
+                    holidayForm.style.display = 'block';
+
+                    // Add animation to form
+                    const formElement = document.querySelector('.holiday-form');
+                    if (formElement) {
+                        formElement.classList.add('animate__animated', 'animate__fadeInUp');
+                    }
+                };
+            }
+
+            // Close button
+            const closeBtn = document.getElementById('cancelRequest');
+            if (closeBtn) {
+                closeBtn.onclick = function () {
+                    // Add exit animation
+                    const formElement = document.querySelector('.holiday-form');
+                    if (formElement) {
+                        formElement.classList.add('animate__animated', 'animate__fadeOutDown');
+
+                        // Wait for animation to complete before hiding
+                        setTimeout(() => {
+                            holidayForm.style.display = 'none';
+                            document.getElementById('holidayForm').reset();
+                            // Remove animation classes for next time
+                            formElement.classList.remove('animate__animated', 'animate__fadeInUp', 'animate__fadeOutDown');
+                        }, 500);
+                    } else {
+                        holidayForm.style.display = 'none';
+                        document.getElementById('holidayForm').reset();
+                    }
+                };
+            }
+
+            // Direct submit button handler
+            const submitBtn = document.getElementById('submitHolidayBtn');
+            if (submitBtn) {
+                submitBtn.onclick = function () {
+                    // Get form data
+                    const startDate = document.getElementById('startDate').value;
+                    const endDate = document.getElementById('endDate').value;
+                    const reason = document.getElementById('holidayReason').value;
+
+                    // Validate form
+                    if (!startDate || !endDate || !reason) {
+                        alert('Please fill in all fields');
+                        return;
+                    }
+
+                    // Call the global function to submit the form
+                    window.submitHolidayRequest(startDate, endDate, reason);
+                };
+            }
+        });
+    </script>
+
+    <!-- Modern UI Enhancements -->
+    <script src="../js/modern-ui.js"></script>
+    <script src="../js/enhanced-forms.js"></script>
+</body>
+
+</html>

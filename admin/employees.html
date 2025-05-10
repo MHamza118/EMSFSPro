@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FSPro - Employee Management</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Sidebar Toggle Button for Mobile -->
+    <button class="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-brand">FSPro Admin</div>
+        <div class="sidebar-nav">
+            <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="employees.html" class="active"><i class="fas fa-users"></i> Employees</a>
+            <a href="attendance.html"><i class="fas fa-clock"></i> Attendance</a>
+            <a href="tasks.html"><i class="fas fa-tasks"></i> Tasks</a>
+            <a href="progress.html"><i class="fas fa-chart-line"></i> Progress Reports</a>
+            <a href="holidays.html"><i class="fas fa-calendar-alt"></i> Holidays</a>
+            <a href="timetable.html"><i class="fas fa-calendar-week"></i> View Timetables</a>
+            <a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-users"></i> Employee Management</h2>
+                    <button class="btn btn-primary" id="addEmployeeBtn"
+                        onclick="document.getElementById('addEmployeeModal').style.display='block'">
+                        <i class="fas fa-user-plus"></i> Add Employee
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employeesTable">
+                                <!-- Employees will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Employee Modal -->
+        <div class="modal" id="addEmployeeModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Add New Employee</h2>
+                    <button class="close-modal"
+                        onclick="document.getElementById('addEmployeeModal').style.display='none'">&times;</button>
+                </div>
+                <form id="addEmployeeForm">
+                    <div class="form-group">
+                        <label for="employeeId">Employee ID</label>
+                        <input type="text" id="employeeId" placeholder="Enter custom ID (optional)">
+                    </div>
+                    <div class="form-group">
+                        <label for="employeeName">Full Name</label>
+                        <input type="text" id="employeeName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="employeeEmail">Email</label>
+                        <input type="email" id="employeeEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="employeePassword">Password</label>
+                        <input type="password" id="employeePassword" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Add Employee</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Edit Employee Modal -->
+        <div class="modal" id="editEmployeeModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Edit Employee</h2>
+                    <button class="close-modal"
+                        onclick="document.getElementById('editEmployeeModal').style.display='none'">&times;</button>
+                </div>
+                <form id="editEmployeeForm">
+                    <input type="hidden" id="editEmployeeId">
+                    <div class="form-group">
+                        <label for="editEmployeeName">Full Name</label>
+                        <input type="text" id="editEmployeeName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmployeeEmail">Email</label>
+                        <input type="email" id="editEmployeeEmail" required readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editEmployeeStatus">Status</label>
+                        <select id="editEmployeeStatus" required>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                            <option value="On Leave">On Leave</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Employee</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Application Scripts -->
+        <script type="module">
+            // Import Firebase functions
+            import { isLoggedIn, getUserRole, getAllEmployees, addEmployee, deleteEmployee, logoutUser } from '../js/firebase-service.js';
+            import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+            // Get database reference
+            const database = getDatabase();
+
+            // Store employees data globally
+            let employeesData = [];
+
+            // Handle add employee form submission
+            document.getElementById('addEmployeeForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                // Get form values
+                const customId = document.getElementById('employeeId').value.trim();
+                const name = document.getElementById('employeeName').value;
+                const email = document.getElementById('employeeEmail').value;
+                const password = document.getElementById('employeePassword').value;
+
+                // Disable submit button
+                const submitBtn = this.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Adding...';
+
+                try {
+                    // Add employee to Firebase with custom ID if provided
+                    const result = await addEmployee(email, password, name, 'employee', customId || null);
+
+                    if (result.success) {
+                        alert(`Employee ${name} added successfully!`);
+
+                        // Reset form and close modal
+                        this.reset();
+                        document.getElementById('addEmployeeModal').style.display = 'none';
+
+                        // Reload page to show new employee
+                        window.location.reload();
+                    } else {
+                        alert(`Failed to add employee: ${result.error}`);
+                    }
+                } catch (error) {
+                    console.error("Error adding employee:", error);
+                    alert(`Error adding employee: ${error.message}`);
+                } finally {
+                    // Re-enable submit button
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Add Employee';
+                }
+            });
+
+            // Handle edit form submission
+            document.getElementById('editEmployeeForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const employeeId = document.getElementById('editEmployeeId').value;
+                const name = document.getElementById('editEmployeeName').value;
+                const status = document.getElementById('editEmployeeStatus').value;
+
+                // Disable submit button
+                const submitBtn = this.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Updating...';
+
+                try {
+                    // Update employee in Firebase
+                    await update(ref(database, 'employees/' + employeeId), {
+                        name: name,
+                        status: status,
+                        updatedAt: new Date().toISOString()
+                    });
+
+                    alert(`Employee ${name} updated successfully!`);
+
+                    // Close modal and reload page
+                    document.getElementById('editEmployeeModal').style.display = 'none';
+                    window.location.reload();
+                } catch (error) {
+                    console.error("Error updating employee:", error);
+                    alert(`Error updating employee: ${error.message}`);
+                } finally {
+                    // Re-enable submit button
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Update Employee';
+                }
+            });
+
+            // Handle logout
+            document.getElementById('logout').addEventListener('click', async function (e) {
+                e.preventDefault();
+                try {
+                    await logoutUser();
+                    window.location.href = '../index.html';
+                } catch (error) {
+                    console.error("Error logging out:", error);
+                    alert(`Error logging out: ${error.message}`);
+                }
+            });
+
+            // Function to handle edit button click
+            function handleEditClick(employeeId) {
+                const employee = employeesData.find(emp => emp.id === employeeId);
+                if (!employee) {
+                    alert('Employee not found');
+                    return;
+                }
+
+                // Populate edit form
+                document.getElementById('editEmployeeId').value = employee.id;
+                document.getElementById('editEmployeeName').value = employee.name || '';
+                document.getElementById('editEmployeeEmail').value = employee.email;
+                document.getElementById('editEmployeeStatus').value = employee.status || 'Active';
+
+                // Show modal
+                document.getElementById('editEmployeeModal').style.display = 'block';
+            }
+
+            // Function to handle delete button click
+            async function handleDeleteClick(employeeId) {
+                const employee = employeesData.find(emp => emp.id === employeeId);
+                if (!employee) {
+                    alert('Employee not found');
+                    return;
+                }
+
+                if (confirm(`Are you sure you want to delete ${employee.name || employee.email}?`)) {
+                    try {
+                        // Delete employee from Firebase using our new function
+                        const result = await deleteEmployee(employeeId);
+
+                        if (result.success) {
+                            alert('Employee deleted successfully!');
+                            window.location.reload();
+                        } else {
+                            alert(`Failed to delete employee: ${result.error}`);
+                        }
+                    } catch (error) {
+                        console.error("Error deleting employee:", error);
+                        alert(`Error deleting employee: ${error.message}`);
+                    }
+                }
+            }
+
+            // Load employees on page load
+            document.addEventListener('DOMContentLoaded', async function () {
+                if (!isLoggedIn() || getUserRole() !== 'admin') {
+                    window.location.href = '../index.html';
+                    return;
+                }
+
+                try {
+                    // Get employees from Firebase
+                    employeesData = await getAllEmployees();
+
+                    // Update employees table
+                    const tableBody = document.getElementById('employeesTable');
+                    tableBody.innerHTML = '';
+
+                    if (employeesData.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No employees found</td></tr>';
+                        return;
+                    }
+
+                    employeesData.forEach(employee => {
+                        const status = employee.status || 'Active';
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                        <td>${employee.id}</td>
+                        <td>${employee.name || 'N/A'}</td>
+                        <td>${employee.email}</td>
+                        <td>
+                            <span class="status-badge status-${status.toLowerCase()}">
+                                ${status}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="btn btn-sm btn-primary edit-employee" data-id="${employee.id}">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-danger delete-employee" data-id="${employee.id}">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                        tableBody.appendChild(row);
+                    });
+
+                    // Add event listeners to edit and delete buttons
+                    document.querySelectorAll('.edit-employee').forEach(button => {
+                        button.addEventListener('click', function () {
+                            const id = this.getAttribute('data-id');
+                            handleEditClick(id);
+                        });
+                    });
+
+                    document.querySelectorAll('.delete-employee').forEach(button => {
+                        button.addEventListener('click', function () {
+                            const id = this.getAttribute('data-id');
+                            handleDeleteClick(id);
+                        });
+                    });
+                } catch (error) {
+                    console.error("Error loading employees:", error);
+                    const tableBody = document.getElementById('employeesTable');
+                    tableBody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Error loading employees</td></tr>';
+                }
+            });
+        </script>
+
+        <script>
+            // Toggle sidebar on mobile
+            document.querySelector('.sidebar-toggle').addEventListener('click', function () {
+                document.querySelector('.sidebar').classList.toggle('active');
+            });
+        </script>
+    </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FSPro - Time Table</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Sidebar Toggle Button for Mobile -->
+    <button class="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-brand">FSPro</div>
+        <div class="sidebar-nav">
+            <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="timetable.html" class="active"><i class="fas fa-calendar"></i> Time Table</a>
+            <a href="attendance.html"><i class="fas fa-clock"></i> Attendance</a>
+            <a href="tasks.html"><i class="fas fa-tasks"></i> Tasks</a>
+            <a href="progress.html"><i class="fas fa-chart-line"></i> Progress Reports</a>
+            <a href="holidays.html"><i class="fas fa-calendar-alt"></i> Holidays</a>
+            <a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="card">
+                <h2>Set Your Time Table</h2>
+                <div class="time-table-container">
+                    <!-- Monday -->
+                    <div class="day-schedule">
+                        <h3>Monday</h3>
+                        <div class="time-slots" id="mondaySlots">
+                            <!-- Time slots will be added here -->
+                        </div>
+                        <button class="btn btn-primary add-slot-btn" data-day="monday">
+                            <i class="fas fa-plus"></i> Add Time Slot
+                        </button>
+                    </div>
+
+                    <!-- Tuesday -->
+                    <div class="day-schedule">
+                        <h3>Tuesday</h3>
+                        <div class="time-slots" id="tuesdaySlots">
+                            <!-- Time slots will be added here -->
+                        </div>
+                        <button class="btn btn-primary add-slot-btn" data-day="tuesday">
+                            <i class="fas fa-plus"></i> Add Time Slot
+                        </button>
+                    </div>
+
+                    <!-- Wednesday -->
+                    <div class="day-schedule">
+                        <h3>Wednesday</h3>
+                        <div class="time-slots" id="wednesdaySlots">
+                            <!-- Time slots will be added here -->
+                        </div>
+                        <button class="btn btn-primary add-slot-btn" data-day="wednesday">
+                            <i class="fas fa-plus"></i> Add Time Slot
+                        </button>
+                    </div>
+
+                    <!-- Thursday -->
+                    <div class="day-schedule">
+                        <h3>Thursday</h3>
+                        <div class="time-slots" id="thursdaySlots">
+                            <!-- Time slots will be added here -->
+                        </div>
+                        <button class="btn btn-primary add-slot-btn" data-day="thursday">
+                            <i class="fas fa-plus"></i> Add Time Slot
+                        </button>
+                    </div>
+
+                    <!-- Friday -->
+                    <div class="day-schedule">
+                        <h3>Friday</h3>
+                        <div class="time-slots" id="fridaySlots">
+                            <!-- Time slots will be added here -->
+                        </div>
+                        <button class="btn btn-primary add-slot-btn" data-day="friday">
+                            <i class="fas fa-plus"></i> Add Time Slot
+                        </button>
+                    </div>
+
+                    <!-- Saturday -->
+                    <div class="day-schedule">
+                        <h3>Saturday</h3>
+                        <div class="time-slots" id="saturdaySlots">
+                            <!-- Time slots will be added here -->
+                        </div>
+                        <button class="btn btn-primary add-slot-btn" data-day="saturday">
+                            <i class="fas fa-plus"></i> Add Time Slot
+                        </button>
+                    </div>
+                </div>
+                <div class="time-table-actions">
+                    <button class="btn btn-primary" id="saveTimeTable">Save Changes</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Time Slot Modal -->
+        <div class="modal" id="addSlotModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Add Time Slot</h2>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <form id="addSlotForm">
+                    <div class="form-group">
+                        <label for="startTime">Start Time</label>
+                        <input type="time" id="startTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="endTime">End Time</label>
+                        <input type="time" id="endTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="slotType">Type</label>
+                        <select id="slotType" required>
+                            <option value="office">Office Hours</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Slot</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script type="module" src="js/timetable.js"></script>
+
+    <script>
+        // Toggle sidebar on mobile
+        document.querySelector('.sidebar-toggle').addEventListener('click', function () {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>

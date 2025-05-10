@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FSPro - Progress Reports</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Sidebar Toggle Button for Mobile -->
+    <button class="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-brand">FSPro Admin</div>
+        <div class="sidebar-nav">
+            <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="employees.html"><i class="fas fa-users"></i> Employees</a>
+            <a href="attendance.html"><i class="fas fa-clock"></i> Attendance</a>
+            <a href="tasks.html"><i class="fas fa-tasks"></i> Tasks</a>
+            <a href="progress.html" class="active"><i class="fas fa-chart-line"></i> Progress Reports</a>
+            <a href="holidays.html"><i class="fas fa-calendar-alt"></i> Holidays</a>
+            <a href="timetable.html"><i class="fas fa-calendar-week"></i> View Timetables</a>
+            <a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+
+
+            <!-- Progress Reports List Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-list"></i> Progress Reports</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Details</th>
+                                    <th>File</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="progressReportsTable">
+                                <!-- Progress reports will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Review Progress Report Modal -->
+        <div class="modal" id="reviewModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Review Progress Report</h2>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <form id="reviewForm">
+                    <input type="hidden" id="reportId">
+                    <div class="form-group">
+                        <label for="reportStatus">Status</label>
+                        <select id="reportStatus" required>
+                            <option value="approved">Approve</option>
+                            <option value="rejected">Reject</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reportRemarks">Remarks</label>
+                        <textarea id="reportRemarks"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script type="module" src="js/progress.js"></script>
+
+    <script>
+        // Toggle sidebar on mobile
+        document.querySelector('.sidebar-toggle').addEventListener('click', function () {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>

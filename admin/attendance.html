@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FSPro - Attendance Management</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/modern-ui.css">
+    <link rel="stylesheet" href="../css/attendance.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+
+<body>
+    <!-- Sidebar Toggle Button for Mobile -->
+    <button class="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-brand">FSPro Admin</div>
+        <div class="sidebar-nav">
+            <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="employees.html"><i class="fas fa-users"></i> Employees</a>
+            <a href="attendance.html" class="active"><i class="fas fa-clock"></i> Attendance</a>
+            <a href="tasks.html"><i class="fas fa-tasks"></i> Tasks</a>
+            <a href="progress.html"><i class="fas fa-chart-line"></i> Progress Reports</a>
+            <a href="holidays.html"><i class="fas fa-calendar-alt"></i> Holidays</a>
+            <a href="timetable.html"><i class="fas fa-calendar-week"></i> View Timetables</a>
+            <a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <!-- Filters Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-filter"></i> Filters</h2>
+                </div>
+                <div class="card-body">
+                    <div class="filters">
+                        <div class="form-group">
+                            <label for="dateFilter">Date</label>
+                            <input type="date" id="dateFilter" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="employeeFilter">Employee</label>
+                            <select id="employeeFilter" class="form-control">
+                                <option value="">All Employees</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="statusFilter">Status</label>
+                            <select id="statusFilter" class="form-control">
+                                <option value="">All Status</option>
+                                <option value="present">Present</option>
+                                <option value="absent">Absent</option>
+                                <option value="late">Late</option>
+                                <option value="on-leave">On Leave</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" id="applyFilters">
+                            <i class="fas fa-search"></i> Apply Filters
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendance Records Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-list"></i> Attendance Records</h2>
+                    <button class="btn btn-primary" id="exportAttendance">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Employee</th>
+                                    <th>Check In</th>
+                                    <th>Check Out</th>
+                                    <th>Working Hours</th>
+                                    <th>Status</th>
+                                    <th>Late Check-ins</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceTable">
+                                <!-- Attendance records will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Late Check-ins Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-exclamation-triangle"></i> Late Check-ins</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Employee</th>
+                                    <th>Check-in Time</th>
+                                    <th>Reason</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lateCheckinsTable">
+                                <!-- Late check-ins will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script type="module" src="js/attendance.js"></script>
+
+    <script>
+        // Toggle sidebar on mobile
+        document.querySelector('.sidebar-toggle').addEventListener('click', function () {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+    </script>
+
+    <!-- Modern UI Enhancements -->
+    <script src="../js/modern-ui.js"></script>
+</body>
+
+</html>

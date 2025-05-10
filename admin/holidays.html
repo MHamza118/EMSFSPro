@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FSPro - Holiday Management</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .status-badge.status-pending {
+            background-color: #fff8e1;
+            color: #ff8f00;
+        }
+
+        .status-badge.status-approved {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-badge.status-rejected {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        /* Table styling */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .table th,
+        .table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .table th {
+            background-color: #f5f5f5;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Button styling */
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.85rem;
+            margin-right: 5px;
+        }
+
+        .btn-success {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #388e3c;
+        }
+
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+
+        .btn[disabled] {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar Toggle Button for Mobile -->
+    <button class="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-brand">FSPro Admin</div>
+        <div class="sidebar-nav">
+            <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="employees.html"><i class="fas fa-users"></i> Employees</a>
+            <a href="attendance.html"><i class="fas fa-clock"></i> Attendance</a>
+            <a href="tasks.html"><i class="fas fa-tasks"></i> Tasks</a>
+            <a href="progress.html"><i class="fas fa-chart-line"></i> Progress Reports</a>
+            <a href="holidays.html" class="active"><i class="fas fa-calendar-alt"></i> Holidays</a>
+            <a href="timetable.html"><i class="fas fa-calendar-week"></i> View Timetables</a>
+            <a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <!-- Holiday Requests Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-calendar-check"></i> Holiday Requests</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Days</th>
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="holidayRequestsTable">
+                                <!-- Holiday requests will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Holiday Statistics Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-chart-pie"></i> Holiday Statistics</h2>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <h3>Total Requests</h3>
+                            <p id="totalRequests">0</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>Approved</h3>
+                            <p id="approvedRequests">0</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>Pending</h3>
+                            <p id="pendingRequests">0</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>Rejected</h3>
+                            <p id="rejectedRequests">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script type="module">
+        // Import Firebase functions directly
+        import { isLoggedIn, getUserRole, getAllHolidayRequests, updateHolidayRequestStatus } from '../js/firebase-service.js';
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', async function () {
+            console.log("Admin holidays page loaded");
+
+            // Check if user is logged in and is an admin
+            if (!isLoggedIn() || getUserRole() !== 'admin') {
+                console.log("User is not logged in as admin, redirecting");
+                window.location.href = '../index.html';
+                return;
+            }
+
+            // Load holiday requests
+            await loadHolidayRequests();
+        });
+
+        // Load holiday requests
+        async function loadHolidayRequests() {
+            try {
+                console.log("Loading holiday requests directly");
+
+                // Show loading indicator
+                const tableBody = document.getElementById('holidayRequestsTable');
+                if (!tableBody) {
+                    console.error("Holiday requests table body element not found!");
+                    return;
+                }
+
+                tableBody.innerHTML = '<tr><td colspan="7" class="text-center">Loading requests...</td></tr>';
+
+                // Get all holiday requests from Firebase
+                const requests = await getAllHolidayRequests();
+                console.log(`Loaded ${requests.length} holiday requests:`, requests);
+
+                // Display holiday requests
+                displayHolidayRequests(requests);
+
+                // Update statistics
+                updateHolidayStats(requests);
+            } catch (error) {
+                console.error("Error loading holiday requests:", error);
+                const tableBody = document.getElementById('holidayRequestsTable');
+                if (tableBody) {
+                    tableBody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Error loading requests</td></tr>';
+                }
+            }
+        }
+
+        // Display holiday requests
+        function displayHolidayRequests(requests) {
+            console.log("Displaying holiday requests:", requests);
+
+            const tableBody = document.getElementById('holidayRequestsTable');
+            if (!tableBody) {
+                console.error("Holiday requests table body element not found in displayHolidayRequests!");
+                return;
+            }
+
+            tableBody.innerHTML = '';
+
+            if (!requests || requests.length === 0) {
+                console.log("No holiday requests to display");
+                tableBody.innerHTML = '<tr><td colspan="7" class="text-center">No holiday requests found</td></tr>';
+                return;
+            }
+
+            // Sort requests by date (newest first)
+            requests.sort((a, b) => {
+                const dateA = new Date(a.submittedAt || a.startDate);
+                const dateB = new Date(b.submittedAt || b.startDate);
+                return dateB - dateA;
+            });
+
+            requests.forEach(request => {
+                const row = document.createElement('tr');
+
+                // Format status for display (capitalize first letter)
+                const statusDisplay = request.status.charAt(0).toUpperCase() + request.status.slice(1);
+
+                // Determine if buttons should be disabled
+                const isPending = request.status.toLowerCase() === 'pending';
+                const approveDisabled = !isPending ? 'disabled' : '';
+                const rejectDisabled = !isPending ? 'disabled' : '';
+
+                // Format dates for display
+                const formatDate = (dateStr) => {
+                    const date = new Date(dateStr);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                };
+
+                row.innerHTML = `
+                    <td>${request.employeeName || 'Unknown'}</td>
+                    <td>${formatDate(request.startDate)}</td>
+                    <td>${formatDate(request.endDate)}</td>
+                    <td>${request.days}</td>
+                    <td>${request.reason}</td>
+                    <td>
+                        <span class="status-badge status-${request.status.toLowerCase()}">
+                            ${statusDisplay}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-success approve-request" data-id="${request.id}" ${approveDisabled}>
+                            <i class="fas fa-check"></i> Approve
+                        </button>
+                        <button class="btn btn-sm btn-danger reject-request" data-id="${request.id}" ${rejectDisabled}>
+                            <i class="fas fa-times"></i> Reject
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Set up button listeners
+            setupButtonListeners();
+        }
+
+        // Update holiday statistics
+        function updateHolidayStats(requests) {
+            // Calculate stats from requests
+            const stats = {
+                total: requests.length,
+                approved: requests.filter(request => request.status.toLowerCase() === 'approved').length,
+                pending: requests.filter(request => request.status.toLowerCase() === 'pending').length,
+                rejected: requests.filter(request => request.status.toLowerCase() === 'rejected').length
+            };
+
+            document.getElementById('totalRequests').textContent = stats.total;
+            document.getElementById('approvedRequests').textContent = stats.approved;
+            document.getElementById('pendingRequests').textContent = stats.pending;
+            document.getElementById('rejectedRequests').textContent = stats.rejected;
+        }
+
+        // Approve holiday request
+        async function approveRequest(requestId) {
+            try {
+                const requests = await getAllHolidayRequests();
+                const request = requests.find(r => r.id === requestId);
+
+                if (!request) {
+                    alert('Request not found');
+                    return;
+                }
+
+                if (confirm(`Approve holiday request for ${request.employeeName} from ${request.startDate} to ${request.endDate}?`)) {
+                    // Update request status in Firebase
+                    const result = await updateHolidayRequestStatus(requestId, 'approved');
+
+                    if (result.success) {
+                        alert(`Holiday request approved for ${request.employeeName}`);
+
+                        // Reload holiday requests
+                        await loadHolidayRequests();
+                    } else {
+                        alert(`Failed to approve request: ${result.error}`);
+                    }
+                }
+            } catch (error) {
+                console.error("Error approving request:", error);
+                alert(`Error approving request: ${error.message}`);
+            }
+        }
+
+        // Reject holiday request
+        async function rejectRequest(requestId) {
+            try {
+                const requests = await getAllHolidayRequests();
+                const request = requests.find(r => r.id === requestId);
+
+                if (!request) {
+                    alert('Request not found');
+                    return;
+                }
+
+                const remarks = prompt('Please enter a reason for rejection:', '');
+                if (remarks !== null) {  // User didn't cancel
+                    // Update request status in Firebase
+                    const result = await updateHolidayRequestStatus(requestId, 'rejected', remarks);
+
+                    if (result.success) {
+                        alert(`Holiday request rejected for ${request.employeeName}`);
+
+                        // Reload holiday requests
+                        await loadHolidayRequests();
+                    } else {
+                        alert(`Failed to reject request: ${result.error}`);
+                    }
+                }
+            } catch (error) {
+                console.error("Error rejecting request:", error);
+                alert(`Error rejecting request: ${error.message}`);
+            }
+        }
+
+        // Function to handle button clicks
+        function setupButtonListeners() {
+            // Approve buttons
+            document.querySelectorAll('.approve-request').forEach(button => {
+                if (!button.hasAttribute('data-listener-added') && !button.disabled) {
+                    button.setAttribute('data-listener-added', 'true');
+                    button.addEventListener('click', function () {
+                        const requestId = this.getAttribute('data-id');
+                        console.log('Approve button clicked for request:', requestId);
+                        approveRequest(requestId);
+                    });
+                }
+            });
+
+            // Reject buttons
+            document.querySelectorAll('.reject-request').forEach(button => {
+                if (!button.hasAttribute('data-listener-added') && !button.disabled) {
+                    button.setAttribute('data-listener-added', 'true');
+                    button.addEventListener('click', function () {
+                        const requestId = this.getAttribute('data-id');
+                        console.log('Reject button clicked for request:', requestId);
+                        rejectRequest(requestId);
+                    });
+                }
+            });
+        }
+    </script>
+
+
+    <script>
+        // Toggle sidebar on mobile
+        document.querySelector('.sidebar-toggle').addEventListener('click', function () {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>

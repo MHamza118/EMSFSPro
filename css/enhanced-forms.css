@@ -1,0 +1,330 @@
+/* Enhanced Forms and Modals CSS
+   This file adds modern, interactive styling to forms and modals without changing functionality
+*/
+
+:root {
+    --form-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    --input-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    --input-focus-shadow: 0 5px 15px rgba(52, 152, 219, 0.15);
+    --button-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    --button-hover-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    --modal-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    --transition-speed: 0.3s;
+    --form-bg: linear-gradient(135deg, #ffffff, #f8f9fa);
+    --input-bg: linear-gradient(135deg, #ffffff, #f9f9f9);
+    --button-bg: linear-gradient(135deg, #3498db, #2980b9);
+    --button-hover-bg: linear-gradient(135deg, #2980b9, #2c3e50);
+    --modal-bg: linear-gradient(135deg, #ffffff, #f8f9fa);
+    --modal-header-bg: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+/* Login Form Enhancements */
+.login-wrapper {
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    border-radius: 20px;
+    border: none;
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+.login-left {
+    position: relative;
+    overflow: hidden;
+}
+
+.login-left::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(44, 62, 80, 0.8), rgba(52, 152, 219, 0.8));
+    z-index: 0;
+}
+
+.login-left::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+    animation: pulse 15s linear infinite;
+    z-index: 1;
+}
+
+@keyframes pulse {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.login-info {
+    position: relative;
+    z-index: 2;
+}
+
+.logo-text {
+    text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    letter-spacing: -2px;
+    transition: all 0.5s ease;
+}
+
+.logo-text span {
+    position: relative;
+    display: inline-block;
+    animation: glow 3s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% { text-shadow: 0 0 10px rgba(52, 152, 219, 0.5); }
+    50% { text-shadow: 0 0 20px rgba(52, 152, 219, 0.8), 0 0 30px rgba(52, 152, 219, 0.6); }
+}
+
+.logo-underline {
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #ffffff, transparent);
+    animation: shimmer 3s infinite;
+    background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+    0% { background-position: -100% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.tagline {
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    letter-spacing: 2px;
+    opacity: 0.9;
+    transition: all 0.5s ease;
+}
+
+.login-right {
+    background: var(--form-bg);
+}
+
+.login-box {
+    animation: fadeInUp 1s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-header h2 {
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    font-weight: 700;
+}
+
+/* Input Field Enhancements */
+.input-group {
+    margin-bottom: 25px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.input-group input {
+    background: var(--input-bg);
+    border-radius: 12px;
+    padding: 15px 15px 15px 50px;
+    box-shadow: var(--input-shadow);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    box-shadow: var(--input-focus-shadow);
+    transform: translateY(-2px);
+    border-color: rgba(52, 152, 219, 0.3);
+}
+
+.input-group i {
+    color: #3498db;
+    transition: all 0.3s ease;
+}
+
+.input-group.input-focused i {
+    color: #2980b9;
+    transform: scale(1.1);
+}
+
+.input-highlight {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 0;
+    background: linear-gradient(90deg, #3498db, #2980b9);
+    transition: width 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    border-radius: 2px;
+}
+
+.input-focused .input-highlight {
+    width: 100%;
+}
+
+/* Role Selector Enhancements */
+.role-selector {
+    margin-bottom: 30px;
+}
+
+.role-option label {
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--input-shadow);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    position: relative;
+}
+
+.role-option label::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.05));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.role-option label:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--input-focus-shadow);
+}
+
+.role-option label:hover::before {
+    opacity: 1;
+}
+
+.role-option input[type="radio"]:checked+label {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.2));
+    border-color: rgba(52, 152, 219, 0.3);
+    transform: translateY(-3px);
+    box-shadow: var(--input-focus-shadow);
+}
+
+.role-option input[type="radio"]:checked+label i {
+    transform: scale(1.2);
+    color: #2980b9;
+}
+
+/* Button Enhancements */
+#loginButton {
+    background: var(--button-bg);
+    border-radius: 12px;
+    box-shadow: var(--button-shadow);
+    overflow: hidden;
+    position: relative;
+    transition: all 0.3s ease;
+    padding: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+#loginButton:hover {
+    background: var(--button-hover-bg);
+    box-shadow: var(--button-hover-shadow);
+    transform: translateY(-3px);
+}
+
+#loginButton:active {
+    transform: translateY(-1px);
+    box-shadow: var(--button-shadow);
+}
+
+#loginButton .button-text {
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+#loginButton i {
+    position: absolute;
+    right: 20px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+#loginButton:hover .button-text {
+    transform: translateX(-10px);
+}
+
+#loginButton:hover i {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Modal Enhancements */
+.modal, .remarks-modal {
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+.modal-content, .remarks-modal-content {
+    background: var(--modal-bg);
+    border-radius: 15px;
+    box-shadow: var(--modal-shadow);
+    overflow: hidden;
+    animation: modalSlideIn 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    border: none;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.modal-header {
+    background: var(--modal-header-bg);
+    padding: 15px 20px;
+    border-bottom: none;
+}
+
+.modal-header h2, .header-title {
+    color: white;
+    font-weight: 600;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.close-modal {
+    color: white;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.close-modal:hover {
+    color: white;
+    opacity: 1;
+    transform: scale(1.1);
+}

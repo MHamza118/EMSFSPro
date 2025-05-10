@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FSPro - Compensation</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">FSPro</div>
+        <div class="nav-links">
+            <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="timetable.html"><i class="fas fa-calendar"></i> Time Table</a>
+            <a href="attendance.html"><i class="fas fa-clock"></i> Attendance</a>
+            <a href="tasks.html"><i class="fas fa-tasks"></i> Tasks</a>
+            <a href="holidays.html"><i class="fas fa-calendar-alt"></i> Holidays</a>
+            <a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <h2>Compensation Management</h2>
+            
+            <!-- Compensation Form -->
+            <div class="compensation-form-container">
+                <form id="compensationForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="missedDate">Missed Working Day</label>
+                            <input type="date" id="missedDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="compensationDate">Compensation Date</label>
+                            <input type="date" id="compensationDate" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="compensationHours">Compensation Hours</label>
+                            <input type="number" id="compensationHours" min="1" max="8" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="compensationReason">Reason for Compensation</label>
+                            <textarea id="compensationReason" required></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Compensation Request</button>
+                </form>
+            </div>
+
+            <!-- Compensation History -->
+            <div class="compensation-history">
+                <h3>Compensation History</h3>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Missed Date</th>
+                                <th>Compensation Date</th>
+                                <th>Hours</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="compensationHistory">
+                            <!-- Compensation history will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script src="js/compensation.js"></script>
+</body>
+</html> 

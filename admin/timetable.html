@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FSPro - View Timetables</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Sidebar Toggle Button for Mobile -->
+    <button class="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-brand">FSPro Admin</div>
+        <div class="sidebar-nav">
+            <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="employees.html"><i class="fas fa-users"></i> Employees</a>
+            <a href="attendance.html"><i class="fas fa-clock"></i> Attendance</a>
+            <a href="tasks.html"><i class="fas fa-tasks"></i> Tasks</a>
+            <a href="progress.html"><i class="fas fa-chart-line"></i> Progress Reports</a>
+            <a href="holidays.html"><i class="fas fa-calendar-alt"></i> Holidays</a>
+            <a href="timetable.html" class="active"><i class="fas fa-calendar-week"></i> View Timetables</a>
+            <a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <!-- Employee Selection Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-user"></i> Select Employee</h2>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="employeeSelect">Employee</label>
+                        <select id="employeeSelect" class="form-control">
+                            <option value="">Select an employee</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timetable Display Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-calendar-week"></i> Employee Timetable</h2>
+                </div>
+                <div class="card-body">
+                    <div class="timetable-container">
+                        <!-- Monday -->
+                        <div class="timetable-day">
+                            <h3>Monday</h3>
+                            <div class="time-slots" id="mondaySlots">
+                                <!-- Time slots will be loaded here -->
+                            </div>
+                        </div>
+                        <!-- Tuesday -->
+                        <div class="timetable-day">
+                            <h3>Tuesday</h3>
+                            <div class="time-slots" id="tuesdaySlots">
+                                <!-- Time slots will be loaded here -->
+                            </div>
+                        </div>
+                        <!-- Wednesday -->
+                        <div class="timetable-day">
+                            <h3>Wednesday</h3>
+                            <div class="time-slots" id="wednesdaySlots">
+                                <!-- Time slots will be loaded here -->
+                            </div>
+                        </div>
+                        <!-- Thursday -->
+                        <div class="timetable-day">
+                            <h3>Thursday</h3>
+                            <div class="time-slots" id="thursdaySlots">
+                                <!-- Time slots will be loaded here -->
+                            </div>
+                        </div>
+                        <!-- Friday -->
+                        <div class="timetable-day">
+                            <h3>Friday</h3>
+                            <div class="time-slots" id="fridaySlots">
+                                <!-- Time slots will be loaded here -->
+                            </div>
+                        </div>
+                        <!-- Saturday -->
+                        <div class="timetable-day">
+                            <h3>Saturday</h3>
+                            <div class="time-slots" id="saturdaySlots">
+                                <!-- Time slots will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script type="module" src="js/timetable.js"></script>
+
+    <script>
+        // Toggle sidebar on mobile
+        document.querySelector('.sidebar-toggle').addEventListener('click', function () {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>

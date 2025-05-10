@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FSPro - Admin Dashboard</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/modern-ui.css">
+    <link rel="stylesheet" href="../css/enhanced-forms.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+
+<body>
+    <!-- Sidebar Toggle Button for Mobile -->
+    <button class="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-brand">FSPro Admin</div>
+        <div class="sidebar-nav">
+            <a href="dashboard.html" class="active"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="employees.html"><i class="fas fa-users"></i> Employees</a>
+            <a href="attendance.html"><i class="fas fa-clock"></i> Attendance</a>
+            <a href="tasks.html"><i class="fas fa-tasks"></i> Tasks</a>
+            <a href="progress.html"><i class="fas fa-chart-line"></i> Progress Reports</a>
+            <a href="holidays.html"><i class="fas fa-calendar-alt"></i> Holidays</a>
+            <a href="timetable.html"><i class="fas fa-calendar-week"></i> View Timetables</a>
+            <a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="dashboard-grid">
+                <!-- Employee Management Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-users"></i> Employee Management</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="employee-actions">
+                            <button class="btn btn-primary" id="addEmployeeBtn"
+                                onclick="document.getElementById('addEmployeeModal').style.display='block'">
+                                <i class="fas fa-user-plus"></i> Add Employee
+                            </button>
+                            <button class="btn btn-danger" id="deleteEmployeeBtn">
+                                <i class="fas fa-user-minus"></i> Delete Employee
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <select id="employeeSelect" class="form-control">
+                                <option value="">Select an employee</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-chart-bar"></i> Quick Stats</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="stats-container">
+                            <div class="stat-item">
+                                <h3 id="totalEmployees">0</h3>
+                                <p>Total Employees</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3 id="presentToday">0</h3>
+                                <p>Present Today</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3 id="onLeave">0</h3>
+                                <p>On Leave</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-history"></i> Recent Activity</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Employee</th>
+                                        <th>Activity</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentActivity">
+                                    <!-- Recent activity will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Requests Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-clock"></i> Pending Requests</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Type</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pendingRequests">
+                                    <!-- Pending requests will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Employee Modal -->
+        <div class="modal" id="addEmployeeModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Add New Employee</h2>
+                    <button class="close-modal"
+                        onclick="document.getElementById('addEmployeeModal').style.display='none'">&times;</button>
+                </div>
+                <form id="addEmployeeForm">
+                    <div class="form-group">
+                        <label for="employeeId">Employee ID</label>
+                        <input type="text" id="employeeId" placeholder="Enter custom ID (optional)">
+                    </div>
+                    <div class="form-group">
+                        <label for="employeeName">Full Name</label>
+                        <input type="text" id="employeeName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="employeeEmail">Email</label>
+                        <input type="email" id="employeeEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="employeePassword">Password</label>
+                        <input type="password" id="employeePassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="employeeRole">Role</label>
+                        <select id="employeeRole" required>
+                            <option value="employee">Employee</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Employee</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Application Scripts -->
+        <script type="module">
+            // Import Firebase functions
+            import { isLoggedIn, getUserRole, getAllEmployees, addEmployee, deleteEmployee, logoutUser } from '../js/firebase-service.js';
+            import { getDatabase, ref } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+            // Get database reference
+            const database = getDatabase();
+
+            // Handle form submission
+            document.getElementById('addEmployeeForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                // Get form values
+                const customId = document.getElementById('employeeId').value.trim();
+                const name = document.getElementById('employeeName').value;
+                const email = document.getElementById('employeeEmail').value;
+                const password = document.getElementById('employeePassword').value;
+                const role = document.getElementById('employeeRole').value;
+
+                // Disable submit button
+                const submitBtn = this.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Adding...';
+
+                try {
+                    // Add employee to Firebase with custom ID if provided
+                    const result = await addEmployee(email, password, name, role, customId || null);
+
+                    if (result.success) {
+                        alert(`Employee ${name} added successfully!`);
+
+                        // Reset form and close modal
+                        this.reset();
+                        document.getElementById('addEmployeeModal').style.display = 'none';
+
+                        // Reload page to show new employee
+                        window.location.reload();
+                    } else {
+                        alert(`Failed to add employee: ${result.error}`);
+                    }
+                } catch (error) {
+                    console.error("Error adding employee:", error);
+                    alert(`Error adding employee: ${error.message}`);
+                } finally {
+                    // Re-enable submit button
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Add Employee';
+                }
+            });
+
+            // Handle delete employee button
+            document.getElementById('deleteEmployeeBtn').addEventListener('click', async function () {
+                const select = document.getElementById('employeeSelect');
+                const selectedId = select.value;
+
+                if (!selectedId) {
+                    alert('Please select an employee to delete');
+                    return;
+                }
+
+                const selectedName = select.options[select.selectedIndex].text;
+
+                if (confirm(`Are you sure you want to delete ${selectedName}?`)) {
+                    try {
+                        // Delete employee from Firebase using our new function
+                        const result = await deleteEmployee(selectedId);
+
+                        if (result.success) {
+                            alert(`Employee ${selectedName} deleted successfully!`);
+
+                            // Reload page to update the employee list
+                            window.location.reload();
+                        } else {
+                            alert(`Failed to delete employee: ${result.error}`);
+                        }
+                    } catch (error) {
+                        console.error("Error deleting employee:", error);
+                        alert(`Error deleting employee: ${error.message}`);
+                    }
+                }
+            });
+
+            // Handle logout
+            document.getElementById('logout').addEventListener('click', async function (e) {
+                e.preventDefault();
+                try {
+                    await logoutUser();
+                    window.location.href = '../index.html';
+                } catch (error) {
+                    console.error("Error logging out:", error);
+                    alert(`Error logging out: ${error.message}`);
+                }
+            });
+
+            // Load employees on page load
+            document.addEventListener('DOMContentLoaded', async function () {
+                if (!isLoggedIn() || getUserRole() !== 'admin') {
+                    window.location.href = '../index.html';
+                    return;
+                }
+
+                try {
+                    // Get employees from Firebase
+                    const employees = await getAllEmployees();
+
+                    // Update employee select dropdown
+                    const select = document.getElementById('employeeSelect');
+                    select.innerHTML = '<option value="">Select an employee</option>';
+
+                    employees.forEach(employee => {
+                        const option = document.createElement('option');
+                        option.value = employee.id;
+                        option.textContent = employee.name || employee.email.split('@')[0];
+                        select.appendChild(option);
+                    });
+
+                    // Update stats
+                    document.getElementById('totalEmployees').textContent = employees.length;
+                    document.getElementById('presentToday').textContent = '0';
+                    document.getElementById('onLeave').textContent = '0';
+                } catch (error) {
+                    console.error("Error loading employees:", error);
+                }
+            });
+        </script>
+
+        <script>
+            // Toggle sidebar on mobile
+            document.querySelector('.sidebar-toggle').addEventListener('click', function () {
+                document.querySelector('.sidebar').classList.toggle('active');
+            });
+        </script>
+
+        <!-- Modern UI Enhancements -->
+        <script src="../js/modern-ui.js"></script>
+        <script src="../js/enhanced-forms.js"></script>
+    </div>
+</body>
+
+</html>
