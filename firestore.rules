@@ -1,0 +1,127 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper function to check if user owns the document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Helper function to check if user is admin (simplified version)
+    function isAdmin() {
+      return isAuthenticated() &&
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Users collection
+    match /users/{userId} {
+      // Allow users to read and update their own profile
+      allow read: if isOwner(userId);
+      allow write: if isOwner(userId);
+
+      // Allow creation of user profiles (needed for signup)
+      allow create: if isAuthenticated();
+
+      // Allow authenticated users to list all users (temporary for debugging)
+      allow list: if isAuthenticated();
+    }
+
+    // Attendance collection
+    match /attendance/{attendanceId} {
+      // Allow authenticated users to create, read, and update their own attendance records
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
+
+      // Allow users to read their own attendance OR admins to read all attendance
+      allow read: if isAuthenticated() &&
+                  (request.auth.uid == resource.data.userId || isAdmin());
+
+      // Allow users to update their own attendance OR admins to update any attendance
+      allow write: if isAuthenticated() &&
+                   (request.auth.uid == resource.data.userId || isAdmin());
+    }
+
+
+
+    // Progress reports collection
+    match /progressReports/{reportId} {
+      // Allow authenticated users to create their own progress reports
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
+
+      // Allow users to read their own progress reports OR admins to read all reports
+      // This covers both individual document reads and collection queries (list operations)
+      allow read: if isAuthenticated() &&
+                  (request.auth.uid == resource.data.userId || isAdmin());
+
+      // Allow users to update their own progress reports OR admins to update any report
+      allow write: if isAuthenticated() &&
+                   (request.auth.uid == resource.data.userId || isAdmin());
+    }
+
+    // Holiday requests collection
+    match /holidayRequests/{requestId} {
+      // Allow authenticated users to create, read, and update their own holiday requests
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
+
+      // Allow users to read their own holiday requests OR admins to read all requests
+      allow read: if isAuthenticated() &&
+                  (request.auth.uid == resource.data.userId || isAdmin());
+
+      // Allow users to update their own holiday requests OR admins to update any request
+      allow write: if isAuthenticated() &&
+                   (request.auth.uid == resource.data.userId || isAdmin());
+    }
+
+    // Tasks collection
+    match /tasks/{taskId} {
+      // Allow authenticated users to read and update all tasks
+      allow read, write: if isAuthenticated();
+      allow create: if isAuthenticated();
+    }
+
+    // Time tables collection
+    match /timeTables/{timeTableId} {
+      // All authenticated users can read and write time tables
+      allow read, write: if isAuthenticated();
+      allow create: if isAuthenticated();
+    }
+
+    // Compensation collection
+    match /compensation/{compensationId} {
+      // Allow authenticated users to read and write their own compensation
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
+
+      // Allow users to read their own compensation OR admins to read all compensation
+      allow read: if isAuthenticated() &&
+                  (request.auth.uid == resource.data.userId || isAdmin());
+
+      // Allow users to update their own compensation OR admins to update any compensation
+      allow write: if isAuthenticated() &&
+                   (request.auth.uid == resource.data.userId || isAdmin());
+    }
+
+    // Notifications collection
+    match /notifications/{notificationId} {
+      // Allow authenticated users to create notifications
+      allow create: if isAuthenticated();
+
+      // Allow users to read their own notifications OR admins to read all notifications
+      allow read: if isAuthenticated() &&
+                  (request.auth.uid == resource.data.userId || isAdmin());
+
+      // Allow users to update their own notifications OR admins to update any notification
+      allow write: if isAuthenticated() &&
+                   (request.auth.uid == resource.data.userId || isAdmin());
+    }
+
+    // Fallback rule - deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

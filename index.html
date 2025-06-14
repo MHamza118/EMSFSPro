@@ -1,124 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FSPro - FS Programmers</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/modern-ui.css">
-    <link rel="stylesheet" href="css/enhanced-forms.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="FSPro - Professional Employee Management System with attendance tracking, task management, and comprehensive reporting." />
+  <meta name="keywords"
+    content="employee management, attendance tracking, task management, progress reports, holiday management" />
+  <meta name="author" content="FSPro Team" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/favicon.ico" />
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="FSPro - Employee Management System" />
+  <meta property="og:description" content="Professional Employee Management System with comprehensive features" />
+  <meta property="og:type" content="website" />
+
+  <!-- Performance and Security -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="theme-color" content="#3498db" />
+
+  <title>FSPro - Employee Management System</title>
 </head>
 
 <body>
-    <div class="login-container">
-        <div class="login-wrapper">
-            <div class="login-left">
-                <div class="login-info">
-                    <div class="logo-container">
-                        <h1 class="logo-text">FS<span>Pro</span></h1>
-                        <div class="logo-underline"></div>
-                    </div>
-                    <p class="tagline">FS Programmers</p>
-                </div>
-            </div>
-            <div class="login-right">
-                <div class="login-box">
-                    <div class="login-header">
-                        <h2>Welcome Back</h2>
-                        <p>Please sign in to continue</p>
-                    </div>
-                    <form id="loginForm">
-                        <div class="input-group">
-                            <i class="fas fa-user"></i>
-                            <input type="text" id="username" placeholder="Email" required>
-                            <span class="input-highlight"></span>
-                        </div>
-                        <div class="input-group">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="password" placeholder="Password" required>
-                            <span class="input-highlight"></span>
-                            <i class="fas fa-eye-slash toggle-password"></i>
-                        </div>
-                        <div class="role-selector">
-                            <div class="role-option">
-                                <input type="radio" id="role-faculty" name="role" value="faculty" checked>
-                                <label for="role-faculty">
-                                    <i class="fas fa-user-tie"></i>
-                                    <span>Employee</span>
-                                </label>
-                            </div>
-                            <div class="role-option">
-                                <input type="radio" id="role-admin" name="role" value="admin">
-                                <label for="role-admin">
-                                    <i class="fas fa-user-shield"></i>
-                                    <span>Admin</span>
-                                </label>
-                            </div>
-                        </div>
-                        <button type="submit" id="loginButton">
-                            <span class="button-text">Login</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </button>
-                        <div id="loginMessage" class="login-message"></div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Application Scripts -->
-    <script type="module" src="js/auth.js"></script>
-    <script src="js/modern-ui.js"></script>
-    <script src="js/enhanced-forms.js"></script>
-    <script>
-        // Toggle password visibility
-        document.querySelector('.toggle-password').addEventListener('click', function () {
-            const passwordInput = document.getElementById('password');
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            this.classList.toggle('fa-eye');
-            this.classList.toggle('fa-eye-slash');
-        });
-
-        // Add focus effects to input fields
-        const inputs = document.querySelectorAll('.input-group input');
-        inputs.forEach(input => {
-            input.addEventListener('focus', function () {
-                this.parentElement.classList.add('input-focused');
-            });
-            input.addEventListener('blur', function () {
-                if (!this.value) {
-                    this.parentElement.classList.remove('input-focused');
-                }
-            });
-        });
-
-        // Add animated entrance for login elements
-        document.addEventListener('DOMContentLoaded', function () {
-            // Animate logo with delay
-            const logo = document.querySelector('.logo-text');
-            if (logo) {
-                logo.classList.add('animate__animated', 'animate__fadeInDown');
-                logo.style.animationDelay = '0.3s';
-            }
-
-            // Animate tagline with delay
-            const tagline = document.querySelector('.tagline');
-            if (tagline) {
-                tagline.classList.add('animate__animated', 'animate__fadeIn');
-                tagline.style.animationDelay = '0.6s';
-            }
-
-            // Animate login form with delay
-            const loginBox = document.querySelector('.login-box');
-            if (loginBox) {
-                loginBox.classList.add('animate__animated', 'animate__fadeInUp');
-                loginBox.style.animationDelay = '0.4s';
-            }
-        });
-    </script>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
 </body>
 
 </html>
